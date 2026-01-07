@@ -23,6 +23,8 @@ const envSchema = z.object({
   JWT_REFRESH_SECRET: z.string().min(32),
   JWT_REFRESH_EXPIRES_IN: z.string().default('7d'),
 
+  ANTHROPIC_API_KEY: z.string().optional(),
+
   CORS_ORIGIN: z
     .string()
     .default('http://localhost:5173')
@@ -55,6 +57,10 @@ export const config = {
     expiresIn: parsed.data.JWT_EXPIRES_IN,
     refreshSecret: parsed.data.JWT_REFRESH_SECRET,
     refreshExpiresIn: parsed.data.JWT_REFRESH_EXPIRES_IN,
+  },
+
+  anthropic: {
+    apiKey: parsed.data.ANTHROPIC_API_KEY || '',
   },
 
   cors: {
