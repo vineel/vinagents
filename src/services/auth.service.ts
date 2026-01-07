@@ -4,7 +4,6 @@ import { UserDAO } from '../db/dao/user.dao';
 import { RefreshTokenDAO } from '../db/dao/refresh-token.dao';
 import { config } from '../config/env';
 import {
-  BadRequestError,
   UnauthorizedError,
   ConflictError,
 } from '../utils/errors';
