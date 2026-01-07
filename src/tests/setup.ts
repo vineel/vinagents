@@ -1,10 +1,7 @@
-import dotenv from 'dotenv';
-import path from 'path';
-
-// Load test environment BEFORE importing anything else
-dotenv.config({ path: path.resolve(__dirname, '../../.env.test') });
-
+import { config } from '../config/env';
 import { pool } from '../db/pool';
+
+console.log('TEST DATABASE_URL:', config.database.url);
 
 export async function resetDatabase(): Promise<void> {
   // Truncate tables in correct order (respecting foreign keys)

@@ -1,5 +1,5 @@
 export interface User {
-  id: string;
+  userId: string;
   email: string;
   password: string;
   firstName: string | null;
@@ -10,7 +10,7 @@ export interface User {
 }
 
 export interface RefreshToken {
-  id: string;
+  refreshTokenId: string;
   token: string;
   userId: string;
   expiresAt: Date;

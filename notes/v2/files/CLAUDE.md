@@ -2,11 +2,11 @@
 
 ## About Me
 
-I'm experienced with JavaScript/TypeScript and PHP, with reasonable knowledge of Go and Python. I prefer to avoid Java, Rust, and C. I work primarily with PostgreSQL databases and Linux server environments, though I develop on a Mac.
+I'm experienced with JavaScript/TypeScript and PHP, with reasonable knowledge of Go and Python. I prefer to avoid Java, Rust, and C. I work primarily with PostgreSQL databases and Linux server environments.
 
 ## Project Context
 
-This is VinAgents, a learning project to understand production patterns for running AI agents that combine LLM calls with code execution. I'm building this to inform a larger system (Accordli) that will need similar capabilities.
+This is Agent Runner, a learning project to understand production patterns for running AI agents that combine LLM calls with code execution. I'm building this to inform a larger system (Accordli) that will need similar capabilities.
 
 ## Tech Stack
 
@@ -48,5 +48,28 @@ This is VinAgents, a learning project to understand production patterns for runn
 - Framework suggestions - I'm intentionally keeping the frontend simple
 - Reminders about environment variables or .gitignore basics
 
-# MCP servers
-- Always use Context7 MCP when I need library/API documentation, code generation, setup or configuration steps without me having to explicitly ask.
+## Current Architecture
+
+- API server and worker are separate processes
+- Graphile Worker manages queue; `agent_runs` table is the business record
+- Agents are step-based (even single-step ones) for future multi-step support
+- Cancellation via database flag checked between steps
+- Cost tracking per LLM call, rolled up to run level
+
+## Key Files
+
+- `src/agents/base-agent.ts` - Base class all agents extend
+- `src/worker/executor.ts` - Orchestrates running agent steps
+- `src/worker/tasks/` - Graphile Worker task definitions
+- `src/db/agent-runs.ts` - CRUD for the main runs table
+- `src/lib/queue.ts` - Job queue helpers (enqueue, cancel)
+- `migrations/` - Database migrations
+
+## Commands
+
+```bash
+npm run dev:server    # Start API server
+npm run dev:worker    # Start worker process
+npm run migrate       # Run database migrations
+npm run build         # TypeScript build
+```

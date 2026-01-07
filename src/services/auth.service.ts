@@ -32,7 +32,7 @@ export class AuthService {
       lastName,
     });
 
-    const { accessToken, refreshToken } = await this.generateTokens(user.id, user.email);
+    const { accessToken, refreshToken } = await this.generateTokens(user.userId, user.email);
 
     return {
       user: this.sanitizeUser(user),
@@ -56,7 +56,7 @@ export class AuthService {
       throw new UnauthorizedError('Invalid credentials');
     }
 
-    const { accessToken, refreshToken } = await this.generateTokens(user.id, user.email);
+    const { accessToken, refreshToken } = await this.generateTokens(user.userId, user.email);
 
     return {
       user: this.sanitizeUser(user),
@@ -83,14 +83,14 @@ export class AuthService {
       throw new UnauthorizedError('Refresh token expired');
     }
 
-    const user = await this.userDAO.findById(decoded.id);
+    const user = await this.userDAO.findById(decoded.userId);
     if (!user || !user.isActive) {
       throw new UnauthorizedError('User not found or inactive');
     }
 
     await this.refreshTokenDAO.delete(refreshToken);
 
-    const tokens = await this.generateTokens(user.id, user.email);
+    const tokens = await this.generateTokens(user.userId, user.email);
 
     return {
       user: this.sanitizeUser(user),
@@ -105,13 +105,13 @@ export class AuthService {
 
   private async generateTokens(userId: string, email: string) {
     const accessToken = jwt.sign(
-      { id: userId, email },
+      { userId, email },
       config.jwt.secret,
       { expiresIn: config.jwt.expiresIn } as jwt.SignOptions
     );
 
     const refreshToken = jwt.sign(
-      { id: userId, email },
+      { userId, email },
       config.jwt.refreshSecret,
       { expiresIn: config.jwt.refreshExpiresIn } as jwt.SignOptions
     );

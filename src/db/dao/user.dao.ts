@@ -5,16 +5,16 @@ import { PoolClient } from 'pg';
 export class UserDAO extends BaseDAO {
   async findById(id: string, client?: PoolClient): Promise<User | null> {
     const query = `
-      SELECT id, email, password, first_name, last_name, is_active, created_at, updated_at
+      SELECT user_id, email, password, first_name, last_name, is_active, created_at, updated_at
       FROM app.users
-      WHERE id = $1
+      WHERE user_id = $1
     `;
     return this.executeQuerySingle<User>(query, [id], client);
   }
 
   async findByEmail(email: string, client?: PoolClient): Promise<User | null> {
     const query = `
-      SELECT id, email, password, first_name, last_name, is_active, created_at, updated_at
+      SELECT user_id, email, password, first_name, last_name, is_active, created_at, updated_at
       FROM app.users
       WHERE email = $1
     `;
@@ -23,7 +23,7 @@ export class UserDAO extends BaseDAO {
 
   async findAll(limit = 100, offset = 0): Promise<User[]> {
     const query = `
-      SELECT id, email, password, first_name, last_name, is_active, created_at, updated_at
+      SELECT user_id, email, password, first_name, last_name, is_active, created_at, updated_at
       FROM app.users
       ORDER BY created_at DESC
       LIMIT $1 OFFSET $2
@@ -35,7 +35,7 @@ export class UserDAO extends BaseDAO {
     const query = `
       INSERT INTO app.users (email, password, first_name, last_name)
       VALUES ($1, $2, $3, $4)
-      RETURNING id, email, password, first_name, last_name, is_active, created_at, updated_at
+      RETURNING user_id, email, password, first_name, last_name, is_active, created_at, updated_at
     `;
     const params = [
       data.email,
@@ -84,15 +84,15 @@ export class UserDAO extends BaseDAO {
     const query = `
       UPDATE app.users
       SET ${fields.join(', ')}
-      WHERE id = $${paramIndex}
-      RETURNING id, email, password, first_name, last_name, is_active, created_at, updated_at
+      WHERE user_id = $${paramIndex}
+      RETURNING user_id, email, password, first_name, last_name, is_active, created_at, updated_at
     `;
 
     return this.executeQuerySingle<User>(query, values, client);
   }
 
   async delete(id: string, client?: PoolClient): Promise<boolean> {
-    const query = 'DELETE FROM app.users WHERE id = $1';
+    const query = 'DELETE FROM app.users WHERE user_id = $1';
     const result = await (client || this.pool).query(query, [id]);
     return (result.rowCount ?? 0) > 0;
   }

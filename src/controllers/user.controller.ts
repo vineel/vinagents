@@ -16,7 +16,7 @@ export class UserController {
         throw new NotFoundError('User not found');
       }
 
-      const user = await this.userDAO.findById(req.user.id);
+      const user = await this.userDAO.findById(req.user.userId);
       if (!user) {
         throw new NotFoundError('User not found');
       }

@@ -5,7 +5,7 @@ import { UnauthorizedError } from '../utils/errors';
 
 export interface AuthRequest extends Request {
   user?: {
-    id: string;
+    userId: string;
     email: string;
   };
 }
@@ -26,7 +26,7 @@ export const authenticate = (
 
     try {
       const decoded = jwt.verify(token, config.jwt.secret) as {
-        id: string;
+        userId: string;
         email: string;
       };
 

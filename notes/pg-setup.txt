@@ -46,7 +46,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 CREATE TABLE app.refresh_tokens (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    refresh_token_id uuid DEFAULT gen_random_uuid() NOT NULL,
     token character varying(500) NOT NULL,
     user_id uuid NOT NULL,
     expires_at timestamp with time zone NOT NULL,
@@ -54,7 +54,7 @@ CREATE TABLE app.refresh_tokens (
 );
 
 CREATE TABLE app.users (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    user_id uuid DEFAULT gen_random_uuid() NOT NULL,
     email character varying(255) NOT NULL,
     password character varying(255) NOT NULL,
     first_name character varying(100),
@@ -65,7 +65,7 @@ CREATE TABLE app.users (
 );
 
 ALTER TABLE ONLY app.refresh_tokens
-    ADD CONSTRAINT refresh_tokens_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT refresh_tokens_pkey PRIMARY KEY (refresh_token_id);
 
 ALTER TABLE ONLY app.refresh_tokens
     ADD CONSTRAINT refresh_tokens_token_key UNIQUE (token);
@@ -74,7 +74,7 @@ ALTER TABLE ONLY app.users
     ADD CONSTRAINT users_email_key UNIQUE (email);
 
 ALTER TABLE ONLY app.users
-    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT users_pkey PRIMARY KEY (user_id);
 
 CREATE INDEX idx_refresh_tokens_token ON app.refresh_tokens USING btree (token);
 
@@ -91,4 +91,4 @@ CREATE INDEX idx_users_email ON app.users USING btree (email);
 
 CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON app.users FOR EACH ROW EXECUTE FUNCTION app.update_updated_at_column();
 ALTER TABLE ONLY app.refresh_tokens
-    ADD CONSTRAINT refresh_tokens_user_id_fkey FOREIGN KEY (user_id) REFERENCES app.users(id) ON DELETE CASCADE;
+    ADD CONSTRAINT refresh_tokens_user_id_fkey FOREIGN KEY (user_id) REFERENCES app.users(user_id) ON DELETE CASCADE;
