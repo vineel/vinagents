@@ -59,4 +59,4 @@ export const config = {
   },
 
   staticFilesPath: parsed.data.STATIC_FILES_PATH,
-} as const;
+};

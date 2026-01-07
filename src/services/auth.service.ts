@@ -107,13 +107,13 @@ export class AuthService {
     const accessToken = jwt.sign(
       { id: userId, email },
       config.jwt.secret,
-      { expiresIn: config.jwt.expiresIn }
+      { expiresIn: config.jwt.expiresIn } as jwt.SignOptions
     );
 
     const refreshToken = jwt.sign(
       { id: userId, email },
       config.jwt.refreshSecret,
-      { expiresIn: config.jwt.refreshExpiresIn }
+      { expiresIn: config.jwt.refreshExpiresIn } as jwt.SignOptions
     );
 
     const decoded = jwt.decode(refreshToken) as { exp: number };
