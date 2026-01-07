@@ -32,6 +32,8 @@ This is VinAgents, a learning project to understand production patterns for runn
 - UUIDs for primary keys (using `gen_random_uuid()`)
 - Always include `created_at` and `updated_at` timestamps
 - Use enums for status fields
+- For a Table named Foo, the primary key should be named foo_id.
+- For a Table Foo_bar, the primary key should be named foo_bar_id.
 
 ## When Helping Me
 
@@ -40,6 +42,7 @@ This is VinAgents, a learning project to understand production patterns for runn
 - Show me the "production-ready" way even if it's more code
 - I prefer seeing complete working examples over pseudocode
 - Don't abstract prematurely - start concrete, refactor when patterns emerge
+- Treat me as a senior software engineer with 30 years of experience. I don't need much stroking, just give me the facts and raw opinions.
 
 ## What I Don't Need
 

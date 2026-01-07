@@ -23,7 +23,7 @@ CREATE TYPE app.agent_run_status AS ENUM (
 );
 
 CREATE TABLE app.agent_runs (
-    run_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    agent_run_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES app.users(user_id),
     
     -- Agent identification
@@ -75,8 +75,8 @@ CREATE TYPE app.step_status AS ENUM (
 );
 
 CREATE TABLE app.agent_run_steps (
-    step_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    run_id UUID NOT NULL REFERENCES app.agent_runs(run_id) ON DELETE CASCADE,
+    agent_step_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    agent_run_id UUID NOT NULL REFERENCES app.agent_runs(agent_run_id) ON DELETE CASCADE,
     
     step_number INTEGER NOT NULL,
     step_name TEXT NOT NULL,  -- e.g., 'llm_call_1', 'parse_response', 'llm_call_2'
@@ -100,10 +100,10 @@ CREATE TABLE app.agent_run_steps (
     llm_completion_tokens INTEGER,
     llm_cost_usd NUMERIC(10, 6),
     
-    UNIQUE(run_id, step_number)
+    UNIQUE(agent_run_id, step_number)
 );
 
-CREATE INDEX idx_agent_run_steps_run ON app.agent_run_steps(run_id);
+CREATE INDEX idx_agent_run_steps_run ON app.agent_run_steps(agent_run_id);
 ```
 
 ### 1.3 AgentRunMessages Table
@@ -114,8 +114,8 @@ Granular status messages for UI updates and debugging.
 CREATE TYPE app.message_level AS ENUM ('debug', 'info', 'warn', 'error');
 
 CREATE TABLE app.agent_run_messages (
-    message_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    run_id UUID NOT NULL REFERENCES app.agent_runs(run_id) ON DELETE CASCADE,
+    agent_message_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    agent_run_id UUID NOT NULL REFERENCES app.agent_runs(agent_run_id) ON DELETE CASCADE,
     
     step_number INTEGER,  -- NULL for run-level messages
     level app.message_level NOT NULL DEFAULT 'info',
@@ -125,7 +125,7 @@ CREATE TABLE app.agent_run_messages (
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_agent_run_messages_run ON app.agent_run_messages(run_id, created_at);
+CREATE INDEX idx_agent_run_messages_run ON app.agent_run_messages(agent_run_id, created_at);
 ```
 
 ### 1.4 Graphile Worker Schema
@@ -173,7 +173,7 @@ POST /api/agents/:agentType/run
 3. Insert row into `agent_runs`
 4. Enqueue job with Graphile Worker (using `quickAddJob` or SQL function)
 5. Update `graphile_job_id` in agent_runs
-6. Return run_id to client
+6. Return agent_run_id to client
 
 ### 2.2 Get Run Status
 
