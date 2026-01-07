@@ -8,6 +8,8 @@
     "manualdev": "PORT=4000;tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    "start:worker": "tsx src/worker/index.ts",
+    "dev:worker": "tsx watch src/worker/index.ts",
     "db:seed": "tsx src/db/seed.ts",
     "test": "vitest run",
     "test:watch": "vitest",

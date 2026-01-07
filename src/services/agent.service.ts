@@ -7,6 +7,7 @@ import {
   GetRunStatusOptions,
 } from '../types/agent';
 import { NotFoundError, BadRequestError } from '../utils/errors';
+import { enqueueAgentRun, cancelPendingJob } from '../lib/queue';
 
 export class AgentService {
   private agentRunDAO: AgentRunDAO;
@@ -29,11 +30,13 @@ export class AgentService {
       inputPayload: input,
     });
 
-    // TODO: Enqueue job with Graphile Worker (Step 3)
-    // const jobId = await enqueueAgentRun(run.agentRunId);
-    // await this.agentRunDAO.update(run.agentRunId, { graphileJobId: jobId.toString() });
+    // Enqueue job with Graphile Worker
+    const jobId = await enqueueAgentRun(run.agentRunId);
+    const updatedRun = await this.agentRunDAO.update(run.agentRunId, {
+      graphileJobId: jobId,
+    });
 
-    return run;
+    return updatedRun || run;
   }
 
   async getRunStatus(
@@ -79,10 +82,10 @@ export class AgentService {
       throw new NotFoundError('Agent run not found');
     }
 
-    // TODO: If pending, also remove from Graphile Worker queue (Step 3)
-    // if (run.status === 'pending' && run.graphileJobId) {
-    //   await cancelPendingJob(BigInt(run.graphileJobId));
-    // }
+    // If pending, also remove from Graphile Worker queue
+    if (run.status === 'pending' && run.graphileJobId) {
+      await cancelPendingJob(run.graphileJobId);
+    }
 
     return updatedRun;
   }
