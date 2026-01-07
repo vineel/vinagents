@@ -8,6 +8,18 @@ export abstract class BaseDAO {
     this.pool = pool || defaultPool;
   }
 
+  private snakeToCamel(str: string): string {
+    return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+  }
+
+  private transformRow<T>(row: Record<string, unknown>): T {
+    const transformed: Record<string, unknown> = {};
+    for (const key of Object.keys(row)) {
+      transformed[this.snakeToCamel(key)] = row[key];
+    }
+    return transformed as T;
+  }
+
   protected async executeQuery<T>(
     query: string,
     params?: any[],
@@ -15,7 +27,7 @@ export abstract class BaseDAO {
   ): Promise<T[]> {
     const execClient = client || this.pool;
     const result = await execClient.query(query, params);
-    return result.rows;
+    return result.rows.map((row) => this.transformRow<T>(row));
   }
 
   protected async executeQuerySingle<T>(

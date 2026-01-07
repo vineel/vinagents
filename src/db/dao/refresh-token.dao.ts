@@ -5,9 +5,7 @@ import { PoolClient } from 'pg';
 export class RefreshTokenDAO extends BaseDAO {
   async findByToken(token: string, client?: PoolClient): Promise<RefreshToken | null> {
     const query = `
-      SELECT
-        id, token, user_id as "userId",
-        expires_at as "expiresAt", created_at as "createdAt"
+      SELECT id, token, user_id, expires_at, created_at
       FROM app.refresh_tokens
       WHERE token = $1
     `;
@@ -16,9 +14,7 @@ export class RefreshTokenDAO extends BaseDAO {
 
   async findByUserId(userId: string, client?: PoolClient): Promise<RefreshToken[]> {
     const query = `
-      SELECT
-        id, token, user_id as "userId",
-        expires_at as "expiresAt", created_at as "createdAt"
+      SELECT id, token, user_id, expires_at, created_at
       FROM app.refresh_tokens
       WHERE user_id = $1
       ORDER BY created_at DESC
@@ -30,9 +26,7 @@ export class RefreshTokenDAO extends BaseDAO {
     const query = `
       INSERT INTO app.refresh_tokens (token, user_id, expires_at)
       VALUES ($1, $2, $3)
-      RETURNING
-        id, token, user_id as "userId",
-        expires_at as "expiresAt", created_at as "createdAt"
+      RETURNING id, token, user_id, expires_at, created_at
     `;
     const params = [data.token, data.userId, data.expiresAt];
     const result = await this.executeQuerySingle<RefreshToken>(query, params, client);
