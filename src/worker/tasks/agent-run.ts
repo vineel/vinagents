@@ -7,7 +7,7 @@ interface AgentRunPayload {
   runId: string;
 }
 
-export const agentRun: Task = async (payload, helpers) => {
+export const agentRun: Task = async (payload, _helpers) => {
   const { runId } = payload as AgentRunPayload;
   const agentRunDAO = new AgentRunDAO();
   const messageDAO = new AgentRunMessageDAO();

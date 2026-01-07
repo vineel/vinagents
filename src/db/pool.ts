@@ -42,9 +42,9 @@ export const getClient = async () => {
     logger.error('Client has been checked out for more than 5 seconds');
   }, 5000);
 
-  client.query = (...args: any[]) => {
+  client.query = ((...args: Parameters<typeof originalQuery>) => {
     return originalQuery(...args);
-  };
+  }) as typeof client.query;
 
   client.release = () => {
     clearTimeout(timeout);
