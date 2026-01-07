@@ -9,7 +9,7 @@ export class UserDAO extends BaseDAO {
         id, email, password, first_name as "firstName",
         last_name as "lastName", is_active as "isActive",
         created_at as "createdAt", updated_at as "updatedAt"
-      FROM users
+      FROM app.users
       WHERE id = $1
     `;
     return this.executeQuerySingle<User>(query, [id], client);
@@ -21,7 +21,7 @@ export class UserDAO extends BaseDAO {
         id, email, password, first_name as "firstName",
         last_name as "lastName", is_active as "isActive",
         created_at as "createdAt", updated_at as "updatedAt"
-      FROM users
+      FROM app.users
       WHERE email = $1
     `;
     return this.executeQuerySingle<User>(query, [email], client);
@@ -33,7 +33,7 @@ export class UserDAO extends BaseDAO {
         id, email, password, first_name as "firstName",
         last_name as "lastName", is_active as "isActive",
         created_at as "createdAt", updated_at as "updatedAt"
-      FROM users
+      FROM app.users
       ORDER BY created_at DESC
       LIMIT $1 OFFSET $2
     `;
@@ -42,7 +42,7 @@ export class UserDAO extends BaseDAO {
 
   async create(data: CreateUserDto, client?: PoolClient): Promise<User> {
     const query = `
-      INSERT INTO users (email, password, first_name, last_name)
+      INSERT INTO app.users (email, password, first_name, last_name)
       VALUES ($1, $2, $3, $4)
       RETURNING
         id, email, password, first_name as "firstName",
@@ -94,7 +94,7 @@ export class UserDAO extends BaseDAO {
 
     values.push(id);
     const query = `
-      UPDATE users
+      UPDATE app.users
       SET ${fields.join(', ')}
       WHERE id = $${paramIndex}
       RETURNING
@@ -107,13 +107,13 @@ export class UserDAO extends BaseDAO {
   }
 
   async delete(id: string, client?: PoolClient): Promise<boolean> {
-    const query = 'DELETE FROM users WHERE id = $1';
+    const query = 'DELETE FROM app.users WHERE id = $1';
     const result = await (client || this.pool).query(query, [id]);
     return (result.rowCount ?? 0) > 0;
   }
 
   async exists(email: string, client?: PoolClient): Promise<boolean> {
-    const query = 'SELECT EXISTS(SELECT 1 FROM users WHERE email = $1) as exists';
+    const query = 'SELECT EXISTS(SELECT 1 FROM app.users WHERE email = $1) as exists';
     const result = await this.executeQuerySingle<{ exists: boolean }>(query, [email], client);
     return result?.exists ?? false;
   }
