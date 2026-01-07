@@ -1,0 +1,24 @@
+## Current Architecture
+
+- API server and worker are separate processes
+- PG-BOSS manages queue; `agent_runs` table is the business record
+- Agents are step-based (even single-step ones) for future multi-step support
+- Cancellation via database flag checked between steps
+- Cost tracking per LLM call, rolled up to run level
+
+## Key Files
+
+- `src/agents/base-agent.ts` - Base class all agents extend
+- `src/worker/executor.ts` - Orchestrates running agent steps
+- `src/db/agent-runs.ts` - CRUD for the main runs table
+- `migrations/` - Database migrations
+
+## Commands
+
+```bash
+npm run dev:server    # Start API server
+npm run dev:worker    # Start worker process
+npm run migrate       # Run database migrations
+npm run build         # TypeScript build
+```
+
